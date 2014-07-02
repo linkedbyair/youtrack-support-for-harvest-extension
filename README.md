@@ -8,7 +8,7 @@ Currently based on version 2.04 in the
 * Track time in [YouTrack](http://www.jetbrains.com/youtrack/). Timer icon appears on the 
   full issue view, and on the popup in the agile view when you double-click an issue card.
 * Basecamp: Fixes an apparent bug with URL links from Harvest reports to Basecamp, even in
-  extension version 2.04.
+  extension version 2.04. (Doesn't fix previous time entries, only new ones.)
 * Basecamp: Timer icon appears on closed issues too.
 * Harvest: When viewing a detailed time report or the uninvoiced time report on the Harvest
   website, you can click the hours in the far right column to jump to the timesheet for that
