@@ -5,7 +5,7 @@ Currently based on version 2.04 in the
 
 ## Additional features compared to the official version:
 
-* Track time in [YouTrack](http://www.jetbrains.com/youtrack/). Timer icon appears on the 
+* Track time in [JetBrains YouTrack](http://www.jetbrains.com/youtrack/). Timer icon appears on the 
   full issue view, and on the popup in the agile view when you double-click an issue card.
 * Basecamp: Fixes an apparent bug with URL links from Harvest reports to Basecamp, even in
   extension version 2.04. (Doesn't fix previous time entries, only new ones.)
