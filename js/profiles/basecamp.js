@@ -58,7 +58,7 @@
       BasecampProfile.prototype.addTimer = function(item) {
         var data;
         data = this.getDataForTimer(item);
-        if ( /* this.isTodoCompleted(item) || */ this.notEnoughInfo(data)) { // DM: Prefer to allow tracking time on completed items
+        if (/*this.isTodoCompleted(item) ||*/ this.notEnoughInfo(data)) {
           return;
         }
         this.buildTimer(item, data);
@@ -70,8 +70,7 @@
         itemName = (item.querySelector("a[title]") || item.querySelector("a")).innerText;
         projectName = document.querySelector(this.projectNameSelector).innerText;
         link = item.querySelector("a").getAttribute("href") || "";
-        linkParts = link.match(/^\/(\d+)\/projects\/(\d+)[^\/]*\/todos\/(\d+)/);
-        // DM: Was link.match(/^\/(\d+)\/projects\/(\d+)(?:\S+)?\/todos\/(\d+)/) in official Harvest 2.04 but this still seems to be making broken links, presumably due to change in Basecamp (as did 2.03); above fixes.
+        linkParts = link.match(/^\/(\d+)\/projects\/(\d+)\S+\/todos\/(\d+)\S+$/);
         return {
           account: {
             id: linkParts[1]

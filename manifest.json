@@ -20,7 +20,7 @@
    "content_scripts": [ {
       "js": [ "js/profiles/harvestapp.js" ],
       "matches": [ "https://*.harvestapp.com/time*", "http://*.harvestapp.com/time*", "http://*.harvestapp.dev/time*" ]
-   }, 
+   },
    {
       "js": [ "vendor/zepto.js", "js/profiles/harvestreports.js" ],
       "matches": [ "https://*.harvestapp.com/reports/detailed*", "http://*.harvestapp.com/reports/detailed*" ]
@@ -28,12 +28,10 @@
    {
       "js": [ "js/profiles/basecamp.js" ],
       "matches": [ "https://basecamp.com/*" ]
-   },
-   {
+   }, {
       "js": [ "js/profiles/youtrack.js" ],
       "matches": [ "http://*.myjetbrains.com/youtrack/*" ]
-   },
-   {
+   }, {
       "css": [ "css/trello.css" ],
       "js": [ "js/profiles/trello.js" ],
       "matches": [ "https://trello.com/*" ]
@@ -50,6 +48,6 @@
    "name": "Linked by Air Harvest Time Tracker",
    "permissions": [ "http://*/*", "https://*/*", "cookies", "webRequest" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.0.5",
+   "version": "2.2",
    "web_accessible_resources": [ "images/trello-timer-icon.png" ]
 }

@@ -10,7 +10,7 @@
         this.addTimer = __bind(this.addTimer, this);
         this.addTimers = __bind(this.addTimers, this);
         this.projectNameSelector = "a[title^='Project: '], .sb-board-name";
-        this.itemSelector = ".issueContainer, #editIssueDialog .sb-dlg-content";
+        this.itemSelector = ".fsi-toolbar-content, #editIssueDialog .sb-dlg-content";
         this.platformLoaded = false;
         this.interval = 250;
         this.loadHarvestPlatform();
@@ -97,7 +97,7 @@
       };
 
       YoutrackProfile.prototype.isTodoCompleted = function(item) {
-        if (document.querySelector(".issueContainer.resolved")) { // Note, does not work for agile popups
+        if (document.querySelector(".fsi-card.resolved")) { // Note, does not work for agile popups
           return true;
         } else {
           return false;
