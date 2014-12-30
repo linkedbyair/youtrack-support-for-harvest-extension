@@ -32,7 +32,7 @@ Currently based on version 2.04 in the
 1. Then in Chrome go to [chrome://extensions](chrome://extensions).
 1. Optionally tick "Developer mode" at the top.
 1. Delete an existing .crx-based version, if any (it won't have "Source" or "Reload" links).
-1. Drag the checked-out repository folder into the browser.
+1. Drag the "linkedbyair-harvest-chrome-extension" subfolder from the checked-out repository folder into the browser.
 1. Don't move or delete the folder after that.
 1. Make code changes in the "linkedbyair-harvest-chrome-extension" subfolder. Then just go back to [chrome://extensions](chrome://extensions) and click "Reload" to test.
 1. Bump the version number in `manifest.json`.
