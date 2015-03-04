@@ -29,7 +29,7 @@
           _this = this;
         platformConfig = {
           applicationName: "Youtrack",
-          permalink: "http://%ACCOUNT_ID%.myjetbrains.com/youtrack/issue/%PROJECT_ID%-%ITEM_ID%",
+          permalink: "https://issues.theranest.com/issue/%PROJECT_ID%-%ITEM_ID%",
           environment: this.config.environment
         };
         configScript = document.createElement("script");
@@ -84,7 +84,6 @@
           if (summary) itemName = summary.value.trim();
         }
         issueId = item.querySelector(".issueId, .sb-issue-edit-id").textContent.trim();
-        itemName = issueId + ": " + itemName;
         issueIdParts = issueId.split('-');
         projectId = issueIdParts[0];
         projectName = document.querySelector(this.projectNameSelector).firstChild.textContent.trim();
