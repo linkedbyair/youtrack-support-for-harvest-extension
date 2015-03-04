@@ -10,8 +10,8 @@
         this.addTimer = __bind(this.addTimer, this);
         this.addTimers = __bind(this.addTimers, this);
         this.projectNameSelector = [
-          "a[title^='Project: ']",            // full-screen view and edit
-          ".sb-board-name"                    // agile popup
+          ".fsi-property .attribute.bold",            // full-screen view and edit
+          ".sb-settings-criteria, .sb-board-name"     // agile popup (try find project name, if failed - use board name)
         ].join(", ");
         this.itemSelector = [
           ".toolbar_fsi",                     // full-screen view
@@ -130,10 +130,10 @@
         timer.setAttribute("data-account", JSON.stringify(data.account));
         timer.setAttribute("data-project", JSON.stringify(data.project));
         timer.setAttribute("data-item", JSON.stringify(data.item));
-        var goBefore =
+        var goAfter =
                 item.querySelector('.star_fsi') ||    // full-screen view and edit ('.issueId' also works pretty well for slightly different position)
                 item.children[0];                     // agile popup
-        return goBefore.parentNode.insertBefore(timer, goBefore);
+        return goAfter.parentNode.insertBefore(timer, goAfter.nextSibling);
       };
 
       YoutrackProfile.prototype.notifyPlatformOfNewTimers = function() {
