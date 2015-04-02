@@ -1,18 +1,19 @@
 (function() {
   (function() {
-    var canBeClosed, nextTick, setRunningTimerIcon, shouldClose;
+    var canBeClosed, setRunningTimerIcon, shouldClose, waitUntilChromeAutofocuses;
     canBeClosed = true;
     shouldClose = false;
-    nextTick = function(callback) {
-      return window.setTimeout(callback, 0);
-    };
-    document.addEventListener("DOMContentLoaded", nextTick((function(_this) {
+    window.addEventListener("load", (function(_this) {
       return function() {
         var iframe;
         iframe = document.querySelector("iframe");
-        return iframe.src = "" + _this.config.url + "/platform/timer?service=chrome.google.com&amp;format=platform&amp;external_item_id=1&amp;external_group_id=1&amp;external_group_name=undefined";
+        waitUntilChromeAutofocuses(iframe);
+        iframe.src = "" + _this.config.url + "/platform/timer?service=chrome.google.com&format=platform&external_item_id=1&external_group_id=1";
+        return iframe.addEventListener("load", function() {
+          return iframe.classList.add("is-loaded");
+        });
       };
-    })(this)));
+    })(this));
     window.addEventListener("message", function(e) {
       var height, iframe, isRunning, matches, message;
       iframe = document.querySelector("iframe");
@@ -31,7 +32,7 @@
         return setRunningTimerIcon(isRunning);
       }
     });
-    return setRunningTimerIcon = function(isRunning) {
+    setRunningTimerIcon = function(isRunning) {
       var options, state;
       state = isRunning ? "on" : "off";
       canBeClosed = false;
@@ -49,6 +50,9 @@
       return chrome.browserAction.setTitle({
         title: isRunning ? "View the running Harvest timer" : "Start a Harvest timer"
       });
+    };
+    return waitUntilChromeAutofocuses = function(element) {
+      return element.getBoundingClientRect().width;
     };
   })();
 
