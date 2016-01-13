@@ -29,7 +29,7 @@
           _this = this;
         platformConfig = {
           applicationName: "Youtrack",
-          permalink: "http://%ACCOUNT_ID%.myjetbrains.com/youtrack/issue/%PROJECT_ID%-%ITEM_ID%",
+          permalink: "https://%ACCOUNT_ID%.myjetbrains.com/youtrack/issue/%PROJECT_ID%-%ITEM_ID%",
           environment: this.config.environment
         };
         configScript = document.createElement("script");
