@@ -1,6 +1,6 @@
 # Linked by Air customization of the Harvest Chrome extension
 
-Currently based on version 2.04 in the 
+Currently based on version 2.1.2 in the 
 [Chrome Store](https://chrome.google.com/webstore/detail/harvest-time-tracker/fbpiglieekigmkeebmeohkelfpjjlaia)
 
 ## Additional features compared to the official version:
