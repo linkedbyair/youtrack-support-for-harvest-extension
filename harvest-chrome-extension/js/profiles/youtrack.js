@@ -109,11 +109,7 @@
       YoutrackProfile.prototype.isTodoCompleted = function(item) {
         // Note, does not work for agile popups but we don't use it anyway;
         // prefer to enable tracking time on closed issues
-        if (document.querySelector(".fsi-card.resolved")) {
-          return true;
-        } else {
-          return false;
-        }
+        return !!document.querySelector(".fsi-card.resolved");
       };
 
       YoutrackProfile.prototype.notEnoughInfo = function(data) {

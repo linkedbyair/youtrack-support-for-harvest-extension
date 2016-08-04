@@ -19,7 +19,7 @@ Currently based on version 2.1.2 in the
 
 ## Installation
 
-1. Go to [Releases](https://github.com/linkedbyair/harvest-chrome/releases) in this GitHub repository.
+1. Go to [Releases](https://github.com/extempl/harvest-chrome/releases) in this GitHub repository.
 1. Download the .crx for the latest release.
 1. Then in Chrome go to [chrome://extensions](chrome://extensions).
 1. Optionally tick "Developer mode" at the top.
