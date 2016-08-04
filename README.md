@@ -1,4 +1,4 @@
-# Linked by Air customization of the Harvest Chrome extension
+# customization of the Harvest Chrome extension
 
 Currently based on version 2.1.2 in the 
 [Chrome Store](https://chrome.google.com/webstore/detail/harvest-time-tracker/fbpiglieekigmkeebmeohkelfpjjlaia)
@@ -33,10 +33,8 @@ Currently based on version 2.1.2 in the
 1. Then in Chrome go to [chrome://extensions](chrome://extensions).
 1. Optionally tick "Developer mode" at the top.
 1. Delete an existing .crx-based version, if any (it won't have "Source" or "Reload" links).
-1. Drag the `linkedbyair-harvest-chrome-extension` subfolder from the checked-out repository folder into the browser.
+1. Drag the `harvest-chrome-extension` subfolder from the checked-out repository folder into the browser.
 1. Don't move or delete the folder after that.
-1. Make code changes in the `linkedbyair-harvest-chrome-extension` subfolder. Then just go back to [chrome://extensions](chrome://extensions) and click "Reload" to test.
+1. Make code changes in the `harvest-chrome-extension` subfolder. Then just go back to [chrome://extensions](chrome://extensions) and click "Reload" to test.
 1. Bump the version number in `manifest.json`.
 1. Commit and push your changes.
-1. Go to [chrome://extensions](chrome://extensions) and click "Pack extension..." Choose the `linkedbyair-harvest-chrome-extension` subfolder as the root folder. Ask Dan for the .pem file. Chrome will generate a .crx. Move this into the `build` subfolder.
-1. Create a new release in GitHub. Drag the generated .crx into the GitHub release as the binary.
