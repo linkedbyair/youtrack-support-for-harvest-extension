@@ -13,6 +13,5 @@
    "name": "YouTrack support for Harvest Time Tracker",
    "permissions": [ "http://*/*", "https://*/*" ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.4.0",
-   "web_accessible_resources": [ "images/trello-timer-icon.png" ]
+   "version": "2.4.5"
 }
