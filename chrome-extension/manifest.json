@@ -1,0 +1,18 @@
+{
+   "content_scripts": [ {
+      "js": [ "js/profiles/youtrack.js" ],
+      "matches": [ "https://*.myjetbrains.com/youtrack/*" ]
+   }],
+   "description": "This extension adds YouTrack support to Harvest Time Tracker extension (should be installed to work)",
+   "icons": {
+      "128": "images/h-app@128px.png",
+      "16": "images/h-app@16px.png",
+      "48": "images/h-app@48px.png"
+   },
+   "manifest_version": 2,
+   "name": "YouTrack support for Harvest Time Tracker",
+   "permissions": [ "http://*/*", "https://*/*" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.4.0",
+   "web_accessible_resources": [ "images/trello-timer-icon.png" ]
+}
