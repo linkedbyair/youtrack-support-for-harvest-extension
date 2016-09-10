@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<link rel="stylesheet" href="options.css" />
+
+<form>
+    <label><span>Youtrack server URL</span>
+        <input id="youtrack_url" type="text" placeholder="https://company.myjetbrains.com/youtrack"></label>
+    <label><span>Note: Extension uses existing Youtrack authentication</span></label>
+    <label><span>Harvest URL</span>
+        <input id="harvest_url" type="text" placeholder="https://company.harvestapp.com"></label>
+    <label><span>Harvest Login (Email) <small>(Oauth2 support soon)</small></span>
+        <input id="harvest_login" type="text" /></label>
+    <label><span>Harvest Password</span>
+        <input id="harvest_password" type="password"></label>
+    <input type="submit" value="Save" />
+    <span id="status"></span>
+</form>
+
+<script src="options.js"></script>
+</body>
+</html>

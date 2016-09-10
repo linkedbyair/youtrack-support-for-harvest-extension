@@ -10,8 +10,24 @@
       "48": "images/h-app@48px.png"
    },
    "manifest_version": 2,
+   "background": {
+      "scripts": [ "eventPage.js"],
+      "persistent": false
+   },
    "name": "YouTrack support for Harvest Time Tracker",
-   "permissions": [ "http://*/*", "https://*/*" ],
+   "permissions": [
+      "https://*.harvestapp.com/*",
+      "https://*.myjetbrains.com/*",
+      "storage"
+   ],
+   "browser_action": {
+      "default_icon": "images/h-app@128px.png",
+      "default_title": "instant sync"
+   },
+   "options_ui": {
+      "page": "options/options.html",
+      "chrome_style": true
+   },
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.4.5"
+   "version": "2.5.0"
 }
