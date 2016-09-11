@@ -1,22 +1,38 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <meta charset='utf-8'>
+</head>
 <body>
 <link rel="stylesheet" href="options.css" />
-
+<!-- TODO label styles with animation -->
 <form>
     <label><span>Youtrack server URL</span>
-        <input id="youtrack_url" type="text" placeholder="https://company.myjetbrains.com/youtrack"></label>
-    <label><span>Note: Extension uses existing Youtrack authentication</span></label>
+        <span class="error">Unreachable URL</span>
+        <input name="youtrack_url" id="youtrack_url" type="text" placeholder="https://company.myjetbrains.com/youtrack">
+    </label>
+    <label><span>Note: Extension uses existing Youtrack authentication</span>
+        <span class="error">You're logged out</span>
+        <input type="hidden" id="youtrack_auth" /></label>
     <label><span>Harvest URL</span>
-        <input id="harvest_url" type="text" placeholder="https://company.harvestapp.com"></label>
+        <span class="error">Unreachable URL</span>
+        <input name="harvest_url" id="harvest_url" type="text" placeholder="https://company.harvestapp.com">
+    </label>
     <label><span>Harvest Login (Email) <small>(Oauth2 support soon)</small></span>
-        <input id="harvest_login" type="text" /></label>
+        <span class="error">Incorrect credentials</span>
+        <input name="harvest_login" id="harvest_login" type="text" />
+    </label>
     <label><span>Harvest Password</span>
-        <input id="harvest_password" type="password"></label>
+        <span class="error">Incorrect credentials</span>
+        <input name="harvest_password" id="harvest_password" type="password">
+    </label>
     <input type="submit" value="Save" />
     <span id="status"></span>
 </form>
 
-<script src="options.js"></script>
+<script src="/js/lib/require.js"></script>
+<script src="/js/requireConfig.js"></script>
+<script src="/js/lib/jquery-ajax-sizzle.min.js"></script>
+<script src="/js/options.js"></script>
 </body>
 </html>
