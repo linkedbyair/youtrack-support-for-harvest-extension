@@ -11,10 +11,9 @@ Notes:
 - YT work entry always will be set by current logged in user
 - Entry will not be sync'ed if it is in progress
 - If entry has same YT ID, duration within single day it determines as duplicated and will not be sync'ed again
-- YT entries can't be updated, so you should manually delete them and reimport if needed
+- YT entries can't be updated (yet), so you should create new entry in harvest for new time run
 
 ## In development
 1. Oauth2 support for Harvest
-1. Automatic scheduled synchronization
 1. More error handling
 1. Refactoring and design

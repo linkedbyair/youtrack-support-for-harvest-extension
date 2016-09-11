@@ -1,4 +1,4 @@
-(function () {
+(function () {// TODO check provided options for correctness
 
   var youtrack_url = document.getElementById('youtrack_url')
   var harvest_url = document.getElementById('harvest_url')

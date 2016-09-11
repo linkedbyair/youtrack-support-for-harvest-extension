@@ -1,33 +1,42 @@
 {
-   "content_scripts": [ {
-      "js": [ "js/profiles/youtrack.js" ],
-      "matches": [ "https://*.myjetbrains.com/youtrack/*" ]
-   }],
-   "description": "This extension adds YouTrack support to Harvest Time Tracker extension (should be installed to work)",
-   "icons": {
-      "128": "images/h-app@128px.png",
-      "16": "images/h-app@16px.png",
-      "48": "images/h-app@48px.png"
-   },
-   "manifest_version": 2,
-   "background": {
-      "scripts": [ "eventPage.js"],
-      "persistent": false
-   },
-   "name": "YouTrack support for Harvest Time Tracker",
-   "permissions": [
-      "https://*.harvestapp.com/*",
-      "https://*.myjetbrains.com/*",
-      "storage"
-   ],
-   "browser_action": {
-      "default_icon": "images/h-app@128px.png",
-      "default_title": "instant sync"
-   },
-   "options_ui": {
-      "page": "options/options.html",
-      "chrome_style": true
-   },
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "2.5.0"
+  "content_scripts": [
+    {
+      "js": [
+        "youtrack.js"
+      ],
+      "matches": [
+        "https://*.myjetbrains.com/youtrack/*"
+      ]
+    }
+  ],
+  "description": "This extension adds YouTrack support to Harvest Time Tracker extension (should be installed to work)",
+  "icons": {
+    "128": "images/h-app@128px.png",
+    "16": "images/h-app@16px.png",
+    "48": "images/h-app@48px.png"
+  },
+  "manifest_version": 2,
+  "background": {
+    "scripts": [
+      "eventPage.js"
+    ],
+    "persistent": false
+  },
+  "name": "YouTrack support for Harvest Time Tracker",
+  "permissions": [
+    "https://*.harvestapp.com/*",
+    "https://*.myjetbrains.com/*",
+    "storage",
+    "alarms"
+  ],
+  "browser_action": {
+    "default_icon": "images/h-app@128px.png",
+    "default_title": "instant sync"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "chrome_style": true
+  },
+  "update_url": "https://clients2.google.com/service/update2/crx",
+  "version": "2.5.1"
 }

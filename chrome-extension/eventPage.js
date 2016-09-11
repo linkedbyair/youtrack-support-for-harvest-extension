@@ -1,16 +1,51 @@
 (function () {
 
   var importedStr = "imported from Harvest"
+  var checkInProgress = []
+  var checkDate = []
+  var DAY_IN_MS = 864e5;
 
 
-  chrome.browserAction.onClicked.addListener(function () {
+  chrome.alarms.clearAll(function () {
+    chrome.alarms.create('hourly', { periodInMinutes: 60 })
+  })
 
+  chrome.alarms.onAlarm.addListener(function (alarm) {
+    switch(alarm.name) {
+      case 'hourly':
+        process()
+        break;
+      case 'checkInProgress':
+        checkInProgress.forEach(function (id) {
+          process(id)
+        })
+        break;
+      case 'possiblyOffline':
+        checkDate.forEach(function (date) {
+          process(null, date)
+        })
+    }
+  })
+
+  function process (id, date) {
     if (!(youtrackUrl && harvestUrl && harvestAuth)) { return }
 
-    // if today less than hour
+    var cDate = date || +new Date
+    var cDateKey = checkDate.indexOf(cDate)
+    if(cDateKey) {
+      delete checkDate[cDateKey]
+      if (!checkDate.join()) {
+        checkDate = []
+      }
+    }
+
     harvestGetTime(function (data) {
+      // if today less than hour
       if (!data.day_entries.length) {
-        if (false) { } // TODO if today less than an hour - make request for yesterday
+        if (!date && (new Date).getHours() < 1) {
+          var yesterday = +new Date - DAY_IN_MS
+          return process(null, yesterday)
+        }
       }
       data.day_entries.forEach(function (entry) {
         var issueId = (entry.notes || '').match(/^([A-Z]+-\d+)/)
@@ -18,8 +53,21 @@
 
         issueId = issueId[1]
 
-        if (entry.timer_started_at) { // unfinished TODO
+        var checkingIdKey = checkInProgress.indexOf(entry.id)
+        if (checkingIdKey) {
+          delete checkInProgress[checkingIdKey]
+          if (!checkInProgress.join()) {
+            checkInProgress = []
+          }
+        }
 
+        if (entry.timer_started_at) { // unfinished
+          checkInProgress.push(entry.id)
+          chrome.alarms.get('checkInProgress', function (alarm) {
+            if (!alarm) {
+              chrome.alarms.create('checkInProgress', {delayInMinutes: 10})
+            }
+          })
         } else {
           ytGetWorkItems(issueId, function (data) {
             var workData = {
@@ -33,29 +81,47 @@
               return issue.description == importedStr && issue.duration == workData.duration
             })[0]
             if (!sameIssue) { // TODO update time
-              ytAddWorkItem(issueId, JSON.stringify(workData), function () {
-              }, function (xhttp) {
+              ytAddWorkItem(issueId, JSON.stringify(workData), _f, function (xhttp) {
                 data = xhttp.responseJSON
                 // if no worktype - add w/o it
                 if (xhttp.status == 400 && data.value == "Unknown worktype name") {
                   delete workData.worktype
-                  ytAddWorkItem(issueId, JSON.stringify(workData), function () {
-                  }, function () {
-                    // TODO try to add later (add date to the storage so it will run with normal flow)
+                  ytAddWorkItem(issueId, JSON.stringify(workData), _f, function () {
+                    // TODO determine errors (404, unreachable, offline)
+                    addOfflineAlarm(workData.date)
                   })
+                } else {
+                  // TODO determine errors (404, unreachable, offline)
+                  addOfflineAlarm(workData.date)
                 }
-                // TODO try to add later (add date to the storage so it will run with normal flow)
+
               })
             }
           }, function () {
-            // alert('please login')
-            // TODO try to add later (add date to the storage so it will run with normal flow)
+            // TODO determine errors (404, unreachable, offline, logged out)
+            addOfflineAlarm(date)
           })
         }
       })
 
-    })
+    }, function () { // TODO count errors, on 10 - show red icon ?
+      addOfflineAlarm(date, 2) // TODO if offline than we won't spam any server, since this is the first request
+    }, id, date)
 
+  }
+
+  function addOfflineAlarm(date, delay) {
+    delay = delay || 30
+    checkDate.push(date)
+    chrome.alarms.get('possiblyOffline', function (alarm) {
+      if (!alarm) {
+        chrome.alarms.create('possiblyOffline', {delayInMinutes: delay})
+      }
+    })
+  }
+
+  chrome.browserAction.onClicked.addListener(function () {
+    process()
   })
 
   var youtrackUrl, youtrackWIUrl, harvestUrl, harvestAuth
@@ -92,12 +158,15 @@
     })
   }
 
-  function harvestGetTime (success, error, yesterday) {
+  function harvestGetTime (success, error, id, date) {
     var url = harvestUrl + "/daily/"
-    if (yesterday) {
-      var d = new Date
-      var yesterdayOfYear = dayOfYear(d) - 1
-      url += d.getFullYear() + '/' + yesterdayOfYear
+
+    if(id) {
+      url += 'show/' + id
+
+    } else if (date) {
+      var d = new Date(date)
+      url += +dayOfYear(d) + '/' + d.getFullYear()
     }
     ajax({
       url: url + '?slim=1',
@@ -149,7 +218,6 @@
   }
 
   function dayOfYear (date) {
-    var DAY_IN_MS = 864e5;
 
     function _noon(year, month, day) {
       return new Date(year, month, day, 12, 0, 0);
