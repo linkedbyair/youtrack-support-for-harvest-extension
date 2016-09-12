@@ -40,7 +40,7 @@ function (api, utils) {
       }
     }
 
-    api.harvestGetTime(function (data) {
+    api.harvest.time.get(id, date, function (data) {
       // if today less than hour
       if (!data.day_entries.length) {
         if (!date && (new Date).getHours() < 1) {
@@ -70,7 +70,7 @@ function (api, utils) {
             }
           })
         } else {
-          api.ytGetWorkItems(issueId, function (data) {
+          api.youtrack.workItem.getAll(issueId, function (data) {
             var workData = {
               date: +new Date(entry.spent_at),
               duration: (entry.hours * 60).toFixed(),
@@ -82,32 +82,36 @@ function (api, utils) {
               return issue.description == importedStr && issue.duration == workData.duration
             })[0]
             if (!sameIssue) { // TODO update time
-              api.ytAddWorkItem(issueId, JSON.stringify(workData), _f, function (xhttp) {
-                data = xhttp.responseJSON
+              api.youtrack.workItem.add(issueId, JSON.stringify(workData), null, function (xhr) {
+                var data = xhr.responseJSON
                 // if no worktype - add w/o it
-                if (xhttp.status == 400 && data.value == "Unknown worktype name") {
+                if (xhr.status == 400 && data.value == "Unknown worktype name") {
                   delete workData.worktype
-                  api.ytAddWorkItem(issueId, JSON.stringify(workData), _f, function () {
-                    // TODO determine errors (404, unreachable, offline)
-                    addOfflineAlarm(workData.date)
+                  api.youtrack.workItem.add(issueId, JSON.stringify(workData), null, function () {
+                    addOfflineAlarm(workData.date) // TODO no need to make request with worktype again
                   })
                 } else {
-                  // TODO determine errors (404, unreachable, offline)
                   addOfflineAlarm(workData.date)
                 }
 
               })
             }
-          }, function () {
-            // TODO determine errors (404, unreachable, offline, logged out)
-            addOfflineAlarm(date)
+          }, function (xhr) {
+            switch (xhr.status) {
+              case 403: // TODO logged out, maybe make an ajax request to YT url (w/ oauth redirect)
+                break;
+              case 404: // TODO issue id is not found / have not access
+                break;
+              default:
+                addOfflineAlarm(date)
+            }
           })
         }
       })
 
     }, function () { // TODO count errors, on 10 - show red icon ?
       addOfflineAlarm(date, 2) // TODO if offline than we won't spam any server, since this is the first request
-    }, id, date)
+    })
 
   }
 

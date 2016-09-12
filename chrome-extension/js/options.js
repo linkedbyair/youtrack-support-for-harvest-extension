@@ -24,17 +24,18 @@ function ($, api) {
     }, function () {
       api.reInitOptions(function () {
 
-        api.ytGetProjectIds(function () {
+        api.youtrack.projectIds.get(function () {
           toggleState($youtrackUrl, 'success')
         }, function (xhr) {
           if (xhr.status == 401) {
             toggleState($youtrackAuth, 'error')
+            toggleState($youtrackUrl, 'success')
           } else {
             toggleState($youtrackUrl, 'error')
           }
         })
 
-        api.harvestGetTime(function () {
+        api.harvest.time.get(null, null, function () {
           toggleState($([$harvestUrl[0], $harvestLogin[0], $harvestPassword[0]]), 'success')
         }, function (xhr) {
           if (xhr.status == 401) {
