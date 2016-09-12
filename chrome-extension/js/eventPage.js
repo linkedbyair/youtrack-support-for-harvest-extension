@@ -35,7 +35,7 @@ function (api, utils) {
     var cDateKey = checkDate.indexOf(cDate)
     if(cDateKey) {
       delete checkDate[cDateKey]
-      if (!checkDate.join()) {
+      if (!checkDate.join('')) {
         checkDate = []
       }
     }
@@ -57,7 +57,7 @@ function (api, utils) {
         var checkingIdKey = checkInProgress.indexOf(entry.id)
         if (checkingIdKey) {
           delete checkInProgress[checkingIdKey]
-          if (!checkInProgress.join()) {
+          if (!checkInProgress.join('')) {
             checkInProgress = []
           }
         }
