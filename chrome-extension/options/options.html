@@ -9,14 +9,15 @@
 <form>
     <label><span>Youtrack server URL</span>
         <span class="error">Unreachable URL</span>
-        <input name="youtrack_url" id="youtrack_url" type="text" placeholder="https://company.myjetbrains.com/youtrack">
+        <input name="youtrack_url" id="youtrack_url" type="text" placeholder="https://company.myjetbrains.com/youtrack" />
     </label>
-    <label><span>Note: Extension uses existing Youtrack authentication</span>
+    <label class="hidden-input"><span>Note: Extension uses existing Youtrack authentication</span>
         <span class="error">You're logged out</span>
-        <input type="hidden" id="youtrack_auth" /></label>
+        <input type="hidden" id="youtrack_auth" />
+    </label>
     <label><span>Harvest URL</span>
         <span class="error">Unreachable URL</span>
-        <input name="harvest_url" id="harvest_url" type="text" placeholder="https://company.harvestapp.com">
+        <input name="harvest_url" id="harvest_url" type="text" placeholder="https://company.harvestapp.com" />
     </label>
     <label><span>Harvest Login (Email) <small>(Oauth2 support soon)</small></span>
         <span class="error">Incorrect credentials</span>
@@ -24,7 +25,7 @@
     </label>
     <label><span>Harvest Password</span>
         <span class="error">Incorrect credentials</span>
-        <input name="harvest_password" id="harvest_password" type="password">
+        <input name="harvest_password" id="harvest_password" type="password" />
     </label>
     <input type="submit" value="Save" />
     <span id="status"></span>
