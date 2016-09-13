@@ -11,7 +11,7 @@ function ($, utils) {
 
   function reInitOptions (cb) {
     chrome.storage.sync.get(['youtrack_url', 'harvest_url', 'harvest_login', 'harvest_password'], function (data) {
-      youtrack.url = function () { return data.youtrack_url + '/rest/' }
+      youtrack.url = function (clean) { return data.youtrack_url + (clean ? '' : '/rest/') }
       harvest.url = function () { return data.harvest_url }
       harvest.auth = function () { return btoa(data.harvest_login + ':' + data.harvest_password) }
 

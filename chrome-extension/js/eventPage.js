@@ -1,10 +1,11 @@
 requirejs.config(requirejsConfig);
-requirejs(['api', 'utils'],
-function (api, utils) {
+requirejs(['jquery', 'api', 'utils'],
+function ($, api, utils) {
 
   var importedStr = "imported from Harvest"
   var checkInProgress = []
   var checkDate = []
+  var ytLoginAttempt = false
 
 
   chrome.alarms.clearAll(function () {
@@ -72,6 +73,7 @@ function (api, utils) {
           })
         } else {
           api.youtrack.workItem.getAll(issueId, function (data) {
+            ytLoginAttempt = false
             var workData = {
               date: +new Date(entry.spent_at),
               duration: (entry.hours * 60).toFixed(),
@@ -85,6 +87,9 @@ function (api, utils) {
 
             var _addOrEdit = function (ytEntryId) {
               api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function (xhr) {
+                if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                  return // JSON parse error, actual success
+                }
                 var data = xhr.responseJSON || {}
                 // TODO there is possibility to know which workTypes are present on the server -
                 // - may be useful to cache available projects and worktypes
@@ -110,7 +115,13 @@ function (api, utils) {
             }
           }, function (xhr) {
             switch (xhr.status) {
-              case 403: // TODO logged out, load YT url (w/ oauth redirect) in iframe
+              case 403:
+                if (ytLoginAttempt || $('iframe.yt-relogin').length) { return }
+                ytLoginAttempt = true
+                $('<iframe class="yt-relogin">').appendTo('body').one('load', function () {
+                  setTimeout(function () { $(this).remove() }.bind(this), 3e4)
+                }).attr('src', api.youtrack.url(true))
+                addOfflineAlarm(date, 1)
                 break;
               case 404: // TODO issue id is not found / have not access
                 break;
