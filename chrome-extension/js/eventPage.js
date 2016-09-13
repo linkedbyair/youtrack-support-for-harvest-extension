@@ -12,7 +12,25 @@ function ($, api, utils) {
     chrome.alarms.create('hourly', { periodInMinutes: 60 })
   })
 
-  // TODO fix behavior of the comp's sleep mode: "next" alarm stuck in the past
+  function reactivateAlarm () {
+    chrome.alarms.getAll(function (alarms) {
+      var hourlyAlarm = alarms.filter(function (alarm) {
+        return alarm.name == 'hourly'
+      })[0]
+      if (new Date(hourlyAlarm.scheduledTime) < new Date) {
+        chrome.alarms.clear('hourly', function () {
+          chrome.alarms.create('hourly', {periodInMinutes: 60})
+        })
+      }
+    })
+  }
+
+  chrome.runtime.onMessage.addListener(function (request) {
+    if (request.type == 'youtrackLoaded') {
+      reactivateAlarm()
+    }
+  })
+
   chrome.alarms.onAlarm.addListener(function (alarm) {
     switch(alarm.name) {
       case 'hourly':
@@ -28,6 +46,11 @@ function ($, api, utils) {
           process(null, date)
         })
     }
+  })
+
+  chrome.browserAction.onClicked.addListener(function () {
+    reactivateAlarm()
+    process()
   })
 
   function process (id, date) {
@@ -147,9 +170,5 @@ function ($, api, utils) {
       }
     })
   }
-
-  chrome.browserAction.onClicked.addListener(function () {
-    process()
-  })
 
 });

@@ -146,4 +146,8 @@
       return new YoutrackProfile(host);
     });
 
+    chrome.runtime.sendMessage({
+      type: 'youtrackLoaded'
+    })
+
 }).call(this);
