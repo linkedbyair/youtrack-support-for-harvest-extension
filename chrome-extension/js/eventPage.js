@@ -11,6 +11,7 @@ function (api, utils) {
     chrome.alarms.create('hourly', { periodInMinutes: 60 })
   })
 
+  // TODO fix behavior of the comp's sleep mode: "next" alarm stuck in the past
   chrome.alarms.onAlarm.addListener(function (alarm) {
     switch(alarm.name) {
       case 'hourly':
@@ -41,7 +42,7 @@ function (api, utils) {
     }
 
     api.harvest.time.get(id, date, function (data) {
-      // if today less than hour
+      // if within first hour of today - check yesterday
       if (!data.day_entries.length) {
         if (!date && (new Date).getHours() < 1) {
           var yesterday = +new Date - utils.DAY_IN_MS
@@ -74,20 +75,23 @@ function (api, utils) {
             var workData = {
               date: +new Date(entry.spent_at),
               duration: (entry.hours * 60).toFixed(),
-              description: importedStr,
+              description: importedStr + '; (' + entry.id + ')',
               worktype: {name: entry.task}
             }
             // if no such entry add new
-            var sameIssue = data.filter(function (issue) {
-              return issue.description == importedStr && issue.duration == workData.duration
+            var ytEntry = data.filter(function (ytEntry) {
+              return ~(ytEntry.description || '').indexOf(entry.id)
             })[0]
-            if (!sameIssue) { // TODO update time
-              api.youtrack.workItem.add(issueId, JSON.stringify(workData), null, function (xhr) {
-                var data = xhr.responseJSON
+
+            var _addOrEdit = function (ytEntryId) {
+              api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function (xhr) {
+                var data = xhr.responseJSON || {}
+                // TODO there is possibility to know which workTypes are present on the server -
+                // - may be useful to cache available projects and worktypes
                 // if no worktype - add w/o it
                 if (xhr.status == 400 && data.value == "Unknown worktype name") {
                   delete workData.worktype
-                  api.youtrack.workItem.add(issueId, JSON.stringify(workData), null, function () {
+                  api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function () {
                     addOfflineAlarm(workData.date) // TODO no need to make request with worktype again
                   })
                 } else {
@@ -96,9 +100,17 @@ function (api, utils) {
 
               })
             }
+
+            if (ytEntry) {
+              if (ytEntry.duration != workData.duration) {
+                _addOrEdit(ytEntry.id)
+              }
+            } else {
+              _addOrEdit()
+            }
           }, function (xhr) {
             switch (xhr.status) {
-              case 403: // TODO logged out, maybe make an ajax request to YT url (w/ oauth redirect)
+              case 403: // TODO logged out, load YT url (w/ oauth redirect) in iframe
                 break;
               case 404: // TODO issue id is not found / have not access
                 break;
@@ -110,7 +122,7 @@ function (api, utils) {
       })
 
     }, function () { // TODO count errors, on 10 - show red icon ?
-      addOfflineAlarm(date, 2) // TODO if offline than we won't spam any server, since this is the first request
+      addOfflineAlarm(date, 2) // if offline than we won't spam any server, since this is the first request
     })
 
   }

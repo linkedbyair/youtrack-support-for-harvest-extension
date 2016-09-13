@@ -50,25 +50,15 @@ function ($, utils) {
         error: error
       })
     },
-    add: function (issueId, data, success, error) {
+    editOrAdd: function (issueId, itemId, data, success, error) {
       $.ajax({
-        url: this.url(issueId),
-        method: "POST",
+        url: this.url(issueId) + (itemId || ''),
+        method: itemId ? "PUT" : "POST",
         success: success,
         error: error,
-        data: data,
+        data: JSON.stringify(data),
         dataType: 'json',
         contentType: 'application/json'
-      })
-    },
-    edit: function (issueId, itemId, data, success, error) {
-      $.ajax({
-        url: this.url(issueId) + itemId,
-        method: "PUT",
-        success: success,
-        error: error,
-        data: data,
-        dataType: 'json'
       })
     }
   }
