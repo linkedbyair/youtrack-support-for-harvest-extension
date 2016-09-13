@@ -20,5 +20,4 @@ This extension adds YouTrack integration for [Harvest Time Tracker](https://chro
 
 ## In development:
 1. Oauth2 support for Harvest
-1. More error handling
 1. Refactoring and design

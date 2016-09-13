@@ -12,7 +12,7 @@ function ($, api, utils) {
     chrome.alarms.create('hourly', { periodInMinutes: 60 })
   })
 
-  function reactivateAlarm () {
+  function reactivateAlarm (cb) {
     chrome.alarms.getAll(function (alarms) {
       var hourlyAlarm = alarms.filter(function (alarm) {
         return alarm.name == 'hourly'
@@ -20,6 +20,7 @@ function ($, api, utils) {
       if (new Date(hourlyAlarm.scheduledTime) < new Date) {
         chrome.alarms.clear('hourly', function () {
           chrome.alarms.create('hourly', {periodInMinutes: 60})
+          cb && cb()
         })
       }
     })
@@ -27,7 +28,7 @@ function ($, api, utils) {
 
   chrome.runtime.onMessage.addListener(function (request) {
     if (request.type == 'youtrackLoaded') {
-      reactivateAlarm()
+      reactivateAlarm(process)
     }
   })
 
