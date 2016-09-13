@@ -22,8 +22,7 @@
       "js/requireConfig.js",
       "js/lib/jquery-ajax-sizzle.min.js",
       "js/eventPage.js"
-    ],
-    "persistent": false
+    ]
   },
   "name": "YouTrack support for Harvest Time Tracker",
   "permissions": [
