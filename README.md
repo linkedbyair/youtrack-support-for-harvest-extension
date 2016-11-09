@@ -16,7 +16,8 @@ This extension adds YouTrack integration for [Harvest Time Tracker](https://chro
 - Harvest entry notes should start with YouTrack issue id: XYZ-123
 - YouTrack entry type can be set from Harvest task. Obviously, YT should contain it in list. "No Type" by default.
 - YT work entry always will be set by current logged in user
-- Entry will not be sync'ed if it is in progress
+- Entry will be updated each sync attempt (if changed), even if in progress
+- Next planned date for sync is also available in the title of the extension button
 
 ## In development:
 1. Oauth2 support for Harvest
