@@ -57,6 +57,8 @@ function ($, api, utils) {
   function process (id, date) {
     if (!api.isOptionsPresent()) { return }
 
+    updateTitle()
+
     var cDate = date || +new Date
     var cDateKey = checkDate.indexOf(cDate)
     if(cDateKey) {
@@ -68,13 +70,16 @@ function ($, api, utils) {
 
     api.harvest.time.get(id, date, function (data) {
       // if within first hour of today - check yesterday
-      if (!data.day_entries.length) {
+      data = data && (data.day_entries || [data]) || []
+
+      if (!data.length) {
         if (!date && (new Date).getHours() < 1) {
           var yesterday = +new Date - utils.DAY_IN_MS
           return process(null, yesterday)
         }
+        return
       }
-      data.day_entries.forEach(function (entry) {
+      data.forEach(function (entry) {
         var issueId = (entry.notes || '').match(/^([A-Z]+-\d+)/)
         if (!issueId) { return } // not YT entry
 
@@ -89,77 +94,90 @@ function ($, api, utils) {
         }
 
         if (entry.timer_started_at) { // unfinished
-          checkInProgress.push(entry.id)
+          if (!checkInProgress.includes(entry.id))
+            checkInProgress.push(entry.id)
           chrome.alarms.get('checkInProgress', function (alarm) {
             if (!alarm) {
               chrome.alarms.create('checkInProgress', {delayInMinutes: 10})
             }
-          })
-        } else {
-          api.youtrack.workItem.getAll(issueId, function (data) {
-            ytLoginAttempt = false
-            var workData = {
-              date: +new Date(entry.spent_at),
-              duration: (entry.hours * 60).toFixed(),
-              description: importedStr + '; (' + entry.id + ')',
-              worktype: {name: entry.task}
-            }
-            // if no such entry add new
-            var ytEntry = data.filter(function (ytEntry) {
-              return ~(ytEntry.description || '').indexOf(entry.id)
-            })[0]
-
-            var _addOrEdit = function (ytEntryId) {
-              api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function (xhr) {
-                if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
-                  return // JSON parse error, actual success
-                }
-                var data = xhr.responseJSON || {}
-                // TODO there is possibility to know which workTypes are present on the server -
-                // - may be useful to cache available projects and worktypes
-                // if no worktype - add w/o it
-                if (xhr.status == 400 && data.value == "Unknown worktype name") {
-                  delete workData.worktype
-                  api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function () {
-                    addOfflineAlarm(workData.date) // TODO no need to make request with worktype again
-                  })
-                } else {
-                  addOfflineAlarm(workData.date)
-                }
-
-              })
-            }
-
-            if (ytEntry) {
-              if (ytEntry.duration != workData.duration) {
-                _addOrEdit(ytEntry.id)
-              }
-            } else {
-              _addOrEdit()
-            }
-          }, function (xhr) {
-            switch (xhr.status) {
-              case 403:
-                if (ytLoginAttempt || $('iframe.yt-relogin').length) { return }
-                ytLoginAttempt = true
-                $('<iframe class="yt-relogin">').appendTo('body').one('load', function () {
-                  setTimeout(function () { $(this).remove() }.bind(this), 3e4)
-                }).attr('src', api.youtrack.url(true))
-                addOfflineAlarm(date, 1)
-                break;
-              case 404: // TODO issue id is not found / have not access
-                break;
-              default:
-                addOfflineAlarm(date)
-            }
+            updateTitle()
           })
         }
+
+        api.youtrack.workItem.getAll(issueId, function (data) { // TODO possibly cache issueId
+          ytLoginAttempt = false
+          var workData = {
+            date: +new Date(entry.spent_at),
+            duration: (entry.hours * 60).toFixed(),
+            description: importedStr + '; (' + entry.id + ')',
+            worktype: {name: entry.task}
+          }
+          // if no such entry add new
+          var ytEntry = data.filter(function (ytEntry) {
+            return ~(ytEntry.description || '').indexOf(entry.id)
+          })[0]
+
+          var _addOrEdit = function (ytEntryId) {
+            api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function (xhr) {
+              if (xhr.status >= 200 && xhr.status < 300 || xhr.status == 304) {
+                return // JSON parse error, actual success
+              }
+              var data = xhr.responseJSON || {}
+              // TODO there is possibility to know which workTypes are present on the server -
+              // - may be useful to cache available projects and worktypes
+              // if no worktype - add w/o it
+              if (xhr.status == 400 && data.value == "Unknown worktype name") {
+                delete workData.worktype
+                api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function () {
+                  addOfflineAlarm(workData.date) // TODO no need to make request with worktype again
+                })
+              } else {
+                addOfflineAlarm(workData.date)
+              }
+
+            })
+          }
+
+          if (ytEntry) {
+            if (ytEntry.duration != workData.duration) {
+              _addOrEdit(ytEntry.id)
+            }
+          } else {
+            _addOrEdit()
+          }
+        }, function (xhr) {
+          switch (xhr.status) {
+            case 403:
+              if (ytLoginAttempt || $('iframe.yt-relogin').length) { return }
+              ytLoginAttempt = true
+              $('<iframe class="yt-relogin">').appendTo('body').one('load', function () {
+                setTimeout(function () { $(this).remove() }.bind(this), 3e4)
+              }).attr('src', api.youtrack.url(true))
+              addOfflineAlarm(date, 1)
+              break;
+            case 404: // TODO issue id is not found / have not access
+              break;
+            default:
+              addOfflineAlarm(date)
+          }
+        })
       })
 
     }, function () { // TODO count errors, on 10 - show red icon ?
       addOfflineAlarm(date, 2) // if offline than we won't spam any server, since this is the first request
     })
 
+  }
+
+  function updateTitle() {
+    chrome.alarms.getAll(function (a) {
+      var closestScheduledTime = a.map(function (entry) {
+        return entry.scheduledTime
+      }).sort()[0]
+      var d = new Date(closestScheduledTime)
+      var parsedDate = d.getHours() + ":" + d.getMinutes()
+      chrome.browserAction.setTitle({title: "next sync on " + parsedDate + ". Click to Instant sync"})
+    })
   }
 
   function addOfflineAlarm(date, delay) {
@@ -169,6 +187,7 @@ function ($, api, utils) {
       if (!alarm) {
         chrome.alarms.create('possiblyOffline', {delayInMinutes: delay})
       }
+      updateTitle();
     })
   }
 
