@@ -6,6 +6,9 @@
       ],
       "matches": [
         "https://*.myjetbrains.com/youtrack/*"
+      ],
+      "css": [
+        "css/yt-timer.css"
       ]
     }
   ],

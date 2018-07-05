@@ -9,12 +9,12 @@
         this.addTimers = bind(this.addTimers, this);
         this.projectNameSelector = [
           ".fsi-property .attribute.bold",            // full-screen view and edit
-          ".sb-settings-criteria, .sb-board-name"     // agile popup (try find project name, if failed - use board name)
+          "yt-issue-project"                          // agile popup, full-screen experimental view and edit
         ].join(", ");
         this.itemSelector = [
-          ".toolbar_fsi",                     // full-screen view
-          ".edit-issue-form",                 // full-screen edit
-          "#editIssueDialog .sb-dlg-content"  // agile popup
+          ".toolbar_fsi",                             // full-screen view
+          ".edit-issue-form",                         // full-screen edit
+          ".yt-issue-layout"                          // agile popup, full-screen experimental view and edit
         ].join(", ");
         this.platformLoaded = false;
         this.interval = 250;
@@ -73,15 +73,27 @@
       YoutrackProfile.prototype.getDataForTimer = function(item) {
         var summary, itemName, issueId, issueIdParts, projectName, projectId, itemId, host, accountId;
         summary = item.querySelector([
-          ".issue-summary",                                           // full-screen view
-          ".edit-issue-form__i__summary"                              // full-screen edit
+          ".issue-summary",                                               // full-screen view
+          ".edit-issue-form__i__summary"                                  // full-screen edit
         ].join(", "));
-        if (summary) itemName = summary.textContent.trim();
-        else {
-          summary = item.querySelector("#ei_issuesummary input");     // agile popup
-          if (summary) itemName = summary.value.trim();
+        if (summary) {
+          itemName = summary.textContent.trim();
         }
-        issueId = item.querySelector(".issueId, .sb-issue-edit-id").textContent.trim();
+        else {
+          summary = item.querySelector(".yt-issue-body__summary-common"); // agile popup, full-screen experimental view
+          if (summary) {
+              if (summary.value) {                                        // field being edited
+                itemName = summary.value.trim();
+              }
+              else {
+                itemName = summary.textContent.trim();                    // field not being edited
+              }
+          }
+        }
+        issueId = item.querySelector([
+            ".issueId",                                                   // full screen view
+            ".js-issue-id"                                                // agile popup, full-screen experimental view
+        ].join(", ")).textContent.trim();
         itemName = issueId + ": " + itemName;
         issueIdParts = issueId.split('-');
         projectId = issueIdParts[0];
@@ -105,14 +117,15 @@
       };
 
       YoutrackProfile.prototype.isTodoCompleted = function(item) {
-        // Note, does not work for agile popups but we don't use it anyway;
+        // Does not work for agile popups but we don't use it anyway;
         // prefer to enable tracking time on closed issues
         return !!document.querySelector(".fsi-card.resolved");
       };
 
       YoutrackProfile.prototype.notEnoughInfo = function(data) {
         var _ref, _ref1;
-        return !(((data != null ? (_ref = data.project) != null ? _ref.id : void 0 : void 0) != null) && ((data != null ? (_ref1 = data.item) != null ? _ref1.id : void 0 : void 0) != null));
+        return !(((data != null ? (_ref = data.project) != null ? _ref.id : void 0 : void 0) != null) &&
+            ((data != null ? (_ref1 = data.item) != null ? _ref1.id : void 0 : void 0) != null));
       };
 
       YoutrackProfile.prototype.buildTimer = function(item, data) {
@@ -125,8 +138,9 @@
         timer.setAttribute("data-project", JSON.stringify(data.project));
         timer.setAttribute("data-item", JSON.stringify(data.item));
         var goAfter =
-                item.querySelector('.star_fsi') ||    // full-screen view and edit ('.issueId' also works pretty well for slightly different position)
-                item.children[0];                     // agile popup
+          item.querySelector('.star_fsi') ||            // full-screen view and edit
+                                                        //   ('.issueId' also works pretty well for slightly different position)
+          item.querySelector('yt-issues-more-actions'); // agile popup
         return goAfter.parentNode.insertBefore(timer, goAfter.nextSibling);
       };
 
