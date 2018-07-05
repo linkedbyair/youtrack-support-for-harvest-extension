@@ -57,8 +57,6 @@ function ($, api, utils) {
   function process (id, date) {
     if (!api.isOptionsPresent()) { return }
 
-    console.log('push time to youtrack');
-
     updateTitle()
 
     var cDate = date || +new Date

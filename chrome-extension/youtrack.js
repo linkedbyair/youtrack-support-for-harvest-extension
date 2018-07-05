@@ -140,7 +140,7 @@
         var goAfter =
           item.querySelector('.star_fsi') ||            // full-screen view and edit
                                                         //   ('.issueId' also works pretty well for slightly different position)
-          item.querySelector('yt-issues-more-actions'); // agile popup
+          item.querySelector('yt-issues-more-actions'); // agile popup, experimental full-screen view
         return goAfter.parentNode.insertBefore(timer, goAfter.nextSibling);
       };
 
