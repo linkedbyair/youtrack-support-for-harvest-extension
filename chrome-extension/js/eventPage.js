@@ -57,6 +57,8 @@ function ($, api, utils) {
   function process (id, date) {
     if (!api.isOptionsPresent()) { return }
 
+    console.log('push time to youtrack');
+
     updateTitle()
 
     var cDate = date || +new Date
@@ -126,7 +128,7 @@ function ($, api, utils) {
               // TODO there is possibility to know which workTypes are present on the server -
               // - may be useful to cache available projects and worktypes
               // if no worktype - add w/o it
-              if (xhr.status == 400 && data.value == "Unknown worktype name") {
+              if (xhr.status == 400 && data.value == "Worktype [" + workData.worktype.name + "] is not attached to project.") {
                 delete workData.worktype
                 api.youtrack.workItem.editOrAdd(issueId, ytEntryId, workData, null, function () {
                   addOfflineAlarm(workData.date) // TODO no need to make request with worktype again
